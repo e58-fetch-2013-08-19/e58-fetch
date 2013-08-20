@@ -68,7 +68,7 @@ def on_fetch(event_queue, csv_ctx, url, fetch_data):
     csv_write_data(csv_ctx, fetch_data)
 
 def on_error(event_queue, url, err_type, err_msg):
-    print('error: {!r} :{!r}: {}'.format(url, err_type, err_msg))
+    print('error: {!r}: {!r}: {}'.format(url, err_type, err_msg))
 
 def on_continue(event_queue):
     print('*** continue! ***')
