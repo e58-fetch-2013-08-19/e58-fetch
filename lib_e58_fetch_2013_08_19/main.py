@@ -30,6 +30,7 @@ class CsvCtx:
 
 def csv_write_header(csv_ctx):
     csv_ctx.writer.writerow((
+            'url',
             'title',
             'director',
             'uaddress',
@@ -42,8 +43,9 @@ def csv_write_header(csv_ctx):
             ))
     csv_ctx.fd.flush()
 
-def csv_write_data(csv_ctx, fetch_data):
+def csv_write_data(csv_ctx, url, fetch_data):
     csv_ctx.writer.writerow((
+            url,
             fetch_data['title'],
             fetch_data['director'],
             fetch_data['uaddress'],
@@ -65,7 +67,7 @@ def on_begin(event_queue, url):
 def on_fetch(event_queue, csv_ctx, url, fetch_data):
     print('fetched: {!r}'.format(url))
     
-    csv_write_data(csv_ctx, fetch_data)
+    csv_write_data(csv_ctx, url, fetch_data)
 
 def on_error(event_queue, url, err_type, err_msg):
     print('error: {!r}: {!r}: {}'.format(url, err_type, err_msg))
