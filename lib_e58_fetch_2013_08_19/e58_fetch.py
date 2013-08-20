@@ -112,8 +112,11 @@ def data_fetch_thread(
                     {'in_attrib': {'class': ('firminfo', )}},
                     {'tag': '{http://www.w3.org/1999/xhtml}h1'},
                     ))
-            title = ' | '.join(' '.join(
-                    frag.strip() for frag in elem.itertext()) for elem in title_elem_list
+            title = ' | '.join(
+                    ' '.join(filter(
+                            None,
+                            (frag.strip() for frag in elem.itertext()),
+                            )) for elem in title_elem_list
                     )
             if not title:
                 continue
@@ -126,7 +129,10 @@ def data_fetch_thread(
                     {'in_attrib': {'class': ('director', )}},
                     ))
             fetch_data['director'] = ' | '.join(
-                    ' '.join(frag.strip() for frag in elem.itertext()) for elem in director_elem_list
+                    ' '.join(filter(
+                            None,
+                            (frag.strip() for frag in elem.itertext()),
+                            )) for elem in director_elem_list
                     )
             
             uaddress_elem_list = et_find.find((doc,), (
@@ -162,9 +168,10 @@ def data_fetch_thread(
                     {'in_attrib': {'class': ('phone', )}},
                     {'tag': '{http://www.w3.org/1999/xhtml}img'},
                     ))
-            fetch_data['phone'] = ' | '.join(
-                    elem.get('src', '') for elem in phone_elem_list
-                    )
+            fetch_data['phone'] = ' | '.join(filter(
+                    None,
+                    (elem.get('src') for elem in phone_elem_list),
+                    ))
             
             email_elem_list = et_find.find((doc,), (
                     {'tag': '{http://www.w3.org/1999/xhtml}html'},
@@ -173,7 +180,10 @@ def data_fetch_thread(
                     {'in_attrib': {'class': ('email', )}},
                     ))
             fetch_data['email'] = ' | '.join(
-                    ' '.join(frag.strip() for frag in elem.itertext()) for elem in email_elem_list
+                    ' '.join(filter(
+                            None,
+                            (frag.strip() for frag in elem.itertext()),
+                            )) for elem in email_elem_list
                     )
             
             www_elem_list = et_find.find((doc,), (
@@ -183,7 +193,10 @@ def data_fetch_thread(
                     {'in_attrib': {'class': ('www', )}},
                     ))
             fetch_data['www'] = ' | '.join(
-                    ' '.join(frag.strip() for frag in elem.itertext()) for elem in www_elem_list
+                    ' '.join(filter(
+                            None,
+                            (frag.strip() for frag in elem.itertext()),
+                            )) for elem in www_elem_list
                     )
             
             work_elem_list = et_find.find((doc,), (
