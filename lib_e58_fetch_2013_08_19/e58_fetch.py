@@ -57,6 +57,7 @@ def data_fetch_thread(
         with bulk_data_ctx.lock:
             try:
                 fetch_url = bulk_data_ctx.url_list.pop(0)
+                bulk_data_ctx.used_url_list.append(fetch_url)
             except IndexError:
                 return
         
@@ -83,6 +84,11 @@ def data_fetch_thread(
                     firm_url = url.urljoin(fetch_url, firm_url)
                 
                 with bulk_data_ctx.lock:
+                    if firm_url in bulk_data_ctx.url_list or \
+                            firm_url in bulk_data_ctx.new_url_list or \
+                            firm_url in bulk_data_ctx.used_url_list:
+                        continue
+                    
                     bulk_data_ctx.new_url_list.append(firm_url)
                 
                 if on_scheduled is not None:
@@ -101,6 +107,11 @@ def data_fetch_thread(
                     page_url = url.urljoin(fetch_url, page_url)
                 
                 with bulk_data_ctx.lock:
+                    if page_url in bulk_data_ctx.url_list or \
+                            page_url in bulk_data_ctx.new_url_list or \
+                            page_url in bulk_data_ctx.used_url_list:
+                        continue
+                    
                     bulk_data_ctx.new_url_list.append(page_url)
                 
                 if on_scheduled is not None:
@@ -239,7 +250,7 @@ def init_bulk_data_ctx(bulk_data_ctx):
     bulk_data_ctx.new_url_list = [
             url.urljoin(SITE_URL, 'firms/'),
             ]
-    bulk_data_ctx.done_url_list = []
+    bulk_data_ctx.used_url_list = []
 
 def bulk_data_fetch(
         bulk_data_ctx,
