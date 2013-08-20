@@ -112,7 +112,9 @@ def data_fetch_thread(
                     {'in_attrib': {'class': ('firminfo', )}},
                     {'tag': '{http://www.w3.org/1999/xhtml}h1'},
                     ))
-            title = ' | '.join(' '.join(frag.strip() for frag in elem.itertext()) for elem in title_elem_list)
+            title = ' | '.join(' '.join(
+                    frag.strip() for frag in elem.itertext()) for elem in title_elem_list
+                    )
             if not title:
                 continue
             fetch_data = {'title': title}
@@ -123,7 +125,9 @@ def data_fetch_thread(
                     {'in_attrib': {'class': ('firminfo', )}},
                     {'in_attrib': {'class': ('director', )}},
                     ))
-            fetch_data['director'] = ' | '.join(' '.join(frag.strip() for frag in elem.itertext()) for elem in director_elem_list)
+            fetch_data['director'] = ' | '.join(
+                    ' '.join(frag.strip() for frag in elem.itertext()) for elem in director_elem_list
+                    )
             
             uaddress_elem_list = et_find.find((doc,), (
                     {'tag': '{http://www.w3.org/1999/xhtml}html'},
@@ -131,15 +135,25 @@ def data_fetch_thread(
                     {'in_attrib': {'class': ('firminfo', )}},
                     {'in_attrib': {'class': ('uaddress', )}},
                     ))
-            fetch_data['uaddress'] = ' | '.join(' '.join(frag.strip() for frag in elem.itertext()) for elem in uaddress_elem_list)
+            fetch_data['uaddress'] = ' | '.join(filter(
+                    None,
+                    (elem.text for elem in uaddress_elem_list),
+                    ))
             
             address_elem_list = et_find.find((doc,), (
                     {'tag': '{http://www.w3.org/1999/xhtml}html'},
                     {'tag': '{http://www.w3.org/1999/xhtml}body'},
                     {'in_attrib': {'class': ('firminfo', )}},
                     {'in_attrib': {'class': ('address', )}},
+                    {'any': (
+                            {'tag': '{http://www.w3.org/1999/xhtml}div', 'in_attrib': {'class': ('address', )}},
+                            {'tag': '{http://www.w3.org/1999/xhtml}a', 'in_attrib': {'class': ('maplinked', )}},
+                            )},
                     ))
-            fetch_data['address'] = ' | '.join(' '.join(frag.strip() for frag in elem.itertext()) for elem in address_elem_list)
+            fetch_data['address'] = ' | '.join(filter(
+                    None,
+                    (elem.text for elem in address_elem_list),
+                    ))
             
             phone_elem_list = et_find.find((doc,), (
                     {'tag': '{http://www.w3.org/1999/xhtml}html'},
@@ -148,7 +162,9 @@ def data_fetch_thread(
                     {'in_attrib': {'class': ('phone', )}},
                     {'tag': '{http://www.w3.org/1999/xhtml}img'},
                     ))
-            fetch_data['phone'] = ' | '.join(elem.get('src', '') for elem in phone_elem_list)
+            fetch_data['phone'] = ' | '.join(
+                    elem.get('src', '') for elem in phone_elem_list
+                    )
             
             email_elem_list = et_find.find((doc,), (
                     {'tag': '{http://www.w3.org/1999/xhtml}html'},
@@ -156,7 +172,9 @@ def data_fetch_thread(
                     {'in_attrib': {'class': ('firminfo', )}},
                     {'in_attrib': {'class': ('email', )}},
                     ))
-            fetch_data['email'] = ' | '.join(' '.join(frag.strip() for frag in elem.itertext()) for elem in email_elem_list)
+            fetch_data['email'] = ' | '.join(
+                    ' '.join(frag.strip() for frag in elem.itertext()) for elem in email_elem_list
+                    )
             
             www_elem_list = et_find.find((doc,), (
                     {'tag': '{http://www.w3.org/1999/xhtml}html'},
@@ -164,7 +182,9 @@ def data_fetch_thread(
                     {'in_attrib': {'class': ('firminfo', )}},
                     {'in_attrib': {'class': ('www', )}},
                     ))
-            fetch_data['www'] = ' | '.join(' '.join(frag.strip() for frag in elem.itertext()) for elem in www_elem_list)
+            fetch_data['www'] = ' | '.join(
+                    ' '.join(frag.strip() for frag in elem.itertext()) for elem in www_elem_list
+                    )
             
             work_elem_list = et_find.find((doc,), (
                     {'tag': '{http://www.w3.org/1999/xhtml}html'},
@@ -172,7 +192,12 @@ def data_fetch_thread(
                     {'in_attrib': {'class': ('firminfo', )}},
                     {'in_attrib': {'class': ('work', )}},
                     ))
-            fetch_data['work'] = ' | '.join(' '.join(frag.strip() for frag in elem.itertext()) for elem in work_elem_list)
+            fetch_data['work'] = ' | '.join(
+                    ' '.join(filter(
+                            lambda text: text and text != 'Деятельность:',
+                            (frag.strip() for frag in elem.itertext()),
+                            )) for elem in work_elem_list
+                    )
             
             rubriks_elem_list = et_find.find((doc,), (
                     {'tag': '{http://www.w3.org/1999/xhtml}html'},
@@ -180,7 +205,12 @@ def data_fetch_thread(
                     {'in_attrib': {'class': ('firminfo', )}},
                     {'in_attrib': {'class': ('rubriks', )}},
                     ))
-            fetch_data['rubriks'] = ' | '.join(' '.join(frag.strip() for frag in elem.itertext()) for elem in rubriks_elem_list)
+            fetch_data['rubriks'] = ' | '.join(
+                    ' '.join(filter(
+                            lambda text: text and text != 'Рубрики:',
+                            (frag.strip() for frag in elem.itertext()),
+                            )) for elem in rubriks_elem_list
+                    )
             
             if on_fetch is not None:
                 on_fetch(fetch_url, fetch_data)
